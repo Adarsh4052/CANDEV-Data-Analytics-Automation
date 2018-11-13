@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="text-align: center;">Consumer Price Index</h1>
+
+<div id="chart_div"></div>
+<hr />
+<div id="table_div"></div>
+{% endblock content %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script>
+  google.charts.load('current', {packages: ['corechart', 'line', 'table']});
+  google.charts.setOnLoadCallback(drawBasic);
+
+  function drawBasic() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Month');
+      data.addColumn('number', 'All fields');
+      data.addColumn('number', 'Food');
+      data.addColumn('number', 'Shelter');
+      data.addColumn('number', 'Transportation');
+
+      data.addRows({{ data | safe }});
+
+      var options = {
+        chart: {
+          title: 'Consumer Price Indexes',
+          subtitle: 'monthly, seasonally adjusted'
+        },
+        hAxis: {
+          title: 'Month'
+        },
+        legend: { position: 'bottom' }
+      };
+
+      // Line chart
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+
+      // Table
+      var table = new google.visualization.Table(document.getElementById('table_div'));
+      table.draw(data, {showRowNumber: true, width: '100%', height: '100%', pageSize: 20});
+
+      var columns = [];
+      var series = {};
+      for (var i = 0; i < data.getNumberOfColumns(); i++) {
+        columns.push(i);
+        if (i > 0) {
+          series[i - 1] = {};
+        }
+      }
+
+      google.visualization.events.addListener(chart, 'select', function () {
+          var sel = chart.getSelection();
+          // if selection length is 0, we deselected an element
+          if (sel.length > 0) {
+              // if row is undefined, we clicked on the legend
+              if (sel[0].row === null) {
+                  var col = sel[0].column;
+                  if (columns[col] == col) {
+                      // hide the data series
+                      columns[col] = {
+                          label: data.getColumnLabel(col),
+                          type: data.getColumnType(col),
+                          calc: function () {
+                              return null;
+                          }
+                      };
+                      // grey out the legend entry
+                      series[col - 1].color = '#CCCCCC';
+                  }
+                  else {
+                      // show the data series
+                      columns[col] = col;
+                      series[col - 1].color = null;
+                  }
+                  var view = new google.visualization.DataView(data);
+                  view.setColumns(columns);
+                  chart.draw(view, options);
+              }
+          }
+      });
+  }
+  </script>
+{% endblock javascript %}
