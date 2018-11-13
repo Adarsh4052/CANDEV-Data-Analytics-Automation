@@ -1,3 +1,17 @@
+Monitor the health of the Canadian economy in real time with data fetch and data visualization automation
+
+This project was developed in CANDEV data challenge organized by Statistics Canada & University of Ottawa
+
+Dataset: - Consumer Price Index from Statistics Canada
+
+Programming languages & Tools: - Python, Django, Google Charts
+
+Strategies & Techniques: - Automation with Python, Data preprocessing, data visualization using Google charts, Data prediction using machine learning algorithm linear regression
+
+Results: - A web application was developed for data visualization and for predicting the Canadian economy in real time with end-to-end automation.
+
+
+
 # MIT Data Annotations
 
 API for the MIT Data Annotations Site
